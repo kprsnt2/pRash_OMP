@@ -1,6 +1,6 @@
 # 🚀 OmniChat Deployment & System Architecture Guide
 
-An all-in-one AI chat platform built for personal high-productivity use, featuring **17 specialized agent plugins**, heavy **multi-attachment processing** (unlimited images, multi-page PDFs, CSVs, code), **smart multi-provider fallback cascading**, and **zero-retention privacy routing**.
+An all-in-one AI chat platform built for personal high-productivity use, featuring **17 specialized agent plugins**, heavy **multi-attachment processing** (unlimited images, multi-page PDFs, CSVs, code), **smart multi-provider fallback cascading**, and **zero-retention privacy routing**
 
 ---
 
