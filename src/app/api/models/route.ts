@@ -1,12 +1,28 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { callProviderApi } from '@/lib/api-providers';
+import {
+  getAvailableModels,
+  getGlobalDefaultModel,
+  getModelForProvider,
+} from '@/lib/models';
 import { ModelProvider } from '@/types';
 
 export const runtime = 'nodejs';
 
-// GET: Check server-side configured keys
+// GET: Check server-side configured keys and resolved model list
 export async function GET() {
+  const models = getAvailableModels();
+  const defaultModel = getGlobalDefaultModel();
+
   return NextResponse.json({
+    models,
+    defaultModel,
+    activeModels: {
+      openai: getModelForProvider('openai'),
+      gemini: getModelForProvider('gemini'),
+      nvidia: getModelForProvider('nvidia'),
+      groq: getModelForProvider('groq'),
+    },
     serverConfigured: {
       openai: Boolean(process.env.OPENAI_API_KEY),
       gemini: Boolean(process.env.GEMINI_API_KEY || process.env.GOOGLE_AI_API_KEY),
@@ -25,21 +41,13 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ ok: false, error: 'Provider and API key required' }, { status: 400 });
     }
 
-    const testModel =
-      model ||
-      (provider === 'openai'
-        ? 'gpt-4o-mini'
-        : provider === 'gemini'
-        ? 'gemini-2.5-flash'
-        : provider === 'nvidia'
-        ? 'meta/llama-3.3-70b-instruct'
-        : 'llama-3.1-8b-instant');
+    const testModel = model || getModelForProvider(provider as ModelProvider);
 
     const res = await callProviderApi({
       provider: provider as ModelProvider,
       model: testModel,
       apiKey,
-      messages: [{ role: 'user', content: 'Say "OK"' }],
+      messages: [{ role: 'user', content: 'Respond with OK.' }],
       maxTokens: 5,
     });
 

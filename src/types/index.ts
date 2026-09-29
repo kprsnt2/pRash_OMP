@@ -40,11 +40,14 @@ export interface AgentFeatures {
   specialBadge?: string;
 }
 
+export type AgentCategory = 'education' | 'productivity' | 'health' | 'creative' | 'mind' | 'general';
+
 export interface AgentConfig {
   id: AgentId;
   name: string;
   tagline: string;
   description: string;
+  category: AgentCategory;
   iconName: string;
   color: {
     bg: string;
@@ -79,6 +82,11 @@ export interface Message {
   modelUsed?: string;
   providerUsed?: ModelProvider;
   fallbackNote?: string;
+  fallbackReason?: string;
+  latencyMs?: number;
+  promptTokens?: number;
+  completionTokens?: number;
+  totalTokens?: number;
 }
 
 export interface ChatSession {
@@ -100,6 +108,21 @@ export interface UserSettings {
   preferredOpenAIModel: string;
   autoFallback: boolean;
   privacyMode: boolean; // Force Gemini only (paid key with zero training retention)
+  theme?: 'dark' | 'light' | 'system';
+}
+
+export interface ChatBackupBundle {
+  app: 'omnichat';
+  version: number;
+  exportedAt: number;
+  session?: ChatSession;
+  sessions?: ChatSession[];
+}
+
+export interface AuthState {
+  authenticated: boolean;
+  requiresPassword: boolean;
+  error?: string;
 }
 
 export interface ChatApiRequest {

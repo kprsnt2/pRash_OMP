@@ -6,6 +6,7 @@ export const AGENTS: Record<AgentId, AgentConfig> = {
     name: 'SlumberScribe',
     tagline: 'Bedtime fables for sweet dreams & reading mastery',
     description: 'Weaves comforting, whimsical bedtime narratives tailored to your child\'s age, highlighting vocabulary words and ending with calm, sleep-inducing imagery.',
+    category: 'creative',
     iconName: 'Sparkles',
     color: {
       bg: 'bg-amber-500/10',
@@ -52,6 +53,7 @@ Tell me your child's age, favorite theme (animals, space, magic, trains), or any
     name: 'SynapseSpark',
     tagline: 'ELI5 concept demolition, Feynman breakdowns & math intuition',
     description: 'Breaks down complex academic subjects, science, and math through intuitive real-world analogies, step-by-step logic, and LaTeX formulas.',
+    category: 'education',
     iconName: 'GraduationCap',
     color: {
       bg: 'bg-emerald-500/10',
@@ -89,6 +91,7 @@ I'll break it down using real-world analogies, step-by-step math, and zero acade
     name: 'PrintMatrix',
     tagline: 'Instant printable educational worksheets & answer keys',
     description: 'Generates clean, beautifully formatted worksheets ready for home or classroom printers from any topic, grade level, or uploaded textbook photo.',
+    category: 'education',
     iconName: 'FileSpreadsheet',
     color: {
       bg: 'bg-cyan-500/10',
@@ -165,6 +168,7 @@ Click the **Print / PDF** button on any generated response to print directly wit
     id: 'dataanalyst',
     name: 'FormulaViking',
     tagline: 'Looker Studio, Tableau LODs, SQL queries & CSV audits',
+    category: 'productivity',
     description: 'Expert BI engineer specializing in Looker Studio calculated fields, Tableau LOD expressions ({FIXED}), complex SQL window functions, and CSV audits.',
     iconName: 'BarChart3',
     color: {
@@ -214,6 +218,7 @@ Ask me about:
     id: 'doctor',
     name: 'PharmaOracle',
     tagline: 'Decodes messy prescriptions, blood panels & medical jargon',
+    category: 'health',
     description: 'Decodes handwritten doctor prescriptions, lab bloodwork panels (CBC, Lipid, Metabolic), and diagnostic scans into plain-English explanations with questions for your doctor.',
     iconName: 'Stethoscope',
     color: {
@@ -268,6 +273,7 @@ I'll decode the medical shorthand, explain reference ranges in plain English, an
     id: 'psycho',
     name: 'MindZenith',
     tagline: 'CBT thought reframing, emotional clarity & safe space',
+    category: 'mind',
     description: 'Compassionate emotional support using Cognitive Behavioral Therapy (CBT) to spot cognitive distortions, reframe anxious loops, and guide somatic grounding.',
     iconName: 'HeartHandshake',
     color: {
@@ -309,6 +315,7 @@ Take a breath, and tell me what you're experiencing right now.`,
     id: 'spiritual',
     name: 'DharmaCompass',
     tagline: 'Bhagavad Gita wisdom, Stoic equanimity & life purpose',
+    category: 'mind',
     description: 'Resolves existential doubts, moral dilemmas, and grief by drawing timeless insights from the Bhagavad Gita, Stoicism (Marcus Aurelius), and Eastern philosophy.',
     iconName: 'Compass',
     color: {
@@ -348,6 +355,7 @@ What question or dilemma is resting in your heart today?`,
     id: 'legal',
     name: 'ContractHawk',
     tagline: 'Fine-print predator: hunts red flags & unfair clauses',
+    category: 'productivity',
     description: 'Analyzes contracts, rental leases, NDAs, and service agreements to flag one-sided terms, hidden penalties, and excessive liability.',
     iconName: 'Scale',
     color: {
@@ -388,6 +396,7 @@ Upload a PDF or paste text of any lease, freelance contract, NDA, or terms of se
     id: 'fitness',
     name: 'IronValkyrie',
     tagline: 'Hypertrophy splits, biomechanics & macro optimization',
+    category: 'health',
     description: 'Elite strength & conditioning specialist designing sustainable workout splits, progressive overload strategies, and precision macro plans.',
     iconName: 'Dumbbell',
     color: {
@@ -420,6 +429,7 @@ Share your target goal, available equipment, and schedule!`,
     id: 'coder',
     name: 'SyntaxOverlord',
     tagline: 'Full-stack systems architect & zero-defect debugger',
+    category: 'productivity',
     description: 'Senior principal engineer for Next.js, TypeScript, Python, backend APIs, distributed architecture, and zero-defect code refactoring.',
     iconName: 'Code',
     color: {
@@ -453,6 +463,7 @@ Share your target goal, available equipment, and schedule!`,
     id: 'email',
     name: 'InboxDiplomat',
     tagline: 'High-stakes email composer, negotiation & diplomatic replies',
+    category: 'productivity',
     description: 'Crafts persuasive, perfectly calibrated emails for salary negotiation, diplomatic pushbacks, difficult clients, apologies, and executive updates.',
     iconName: 'Mail',
     color: {
@@ -488,6 +499,7 @@ Tell me who you're emailing and what outcome you want!`,
     id: 'finance',
     name: 'MoneyAlchemist',
     tagline: 'Receipt & bill audit from photos, budget leakage & savings',
+    category: 'productivity',
     description: 'Audits receipts and bills from photos, detects subscription leaks, models savings goals, and explains tax & investment concepts simply.',
     iconName: 'Wallet',
     color: {
@@ -523,6 +535,7 @@ Upload a photo of a receipt, utility bill, or invoice to audit fees, or ask for 
     id: 'chef',
     name: 'FlavorAlchemist',
     tagline: 'Fridge raider: snap a fridge photo -> gourmet recipes',
+    category: 'health',
     description: 'Turns whatever random ingredients you have into delicious recipes. Snap a photo of your fridge or pantry, and get customized step-by-step meals.',
     iconName: 'UtensilsCrossed',
     color: {
@@ -555,6 +568,7 @@ Snap a photo of your open fridge or pantry, or list the ingredients you have on 
     id: 'travel',
     name: 'TripVoyager',
     tagline: 'Day-by-day vacation architect, hidden gems & packing lists',
+    category: 'creative',
     description: 'Plans stress-free day-by-day itineraries, uncovers authentic local spots, calculates budget ranges, and generates weather-optimized packing checklists.',
     iconName: 'Plane',
     color: {
@@ -588,6 +602,7 @@ Tell me your destination, travel dates, who you're traveling with, and travel st
     id: 'career',
     name: 'ResumeVanguard',
     tagline: 'ATS resume revamp, punchy impact bullets & mock interview',
+    category: 'productivity',
     description: 'Optimizes resumes for Applicant Tracking Systems (ATS), turns boring job duties into quantified achievements, and simulates mock interview Q&As.',
     iconName: 'Briefcase',
     color: {
@@ -622,6 +637,7 @@ Upload your resume (PDF/photo) and the target job description. I'll audit your A
     id: 'viral',
     name: 'ViralCrafter',
     tagline: 'Magnetic hooks, LinkedIn thought leadership & X threads',
+    category: 'creative',
     description: 'Turns ideas into viral social content. Crafts scroll-stopping hooks, high-engagement LinkedIn posts, punchy Twitter/X threads, and video scripts.',
     iconName: 'Flame',
     color: {
@@ -654,6 +670,7 @@ Give me the raw thought or topic, and I'll forge it into high-engagement hooks, 
     id: 'general',
     name: 'OmniSpark',
     tagline: 'Multi-disciplinary cognitive partner for everything else',
+    category: 'general',
     description: 'Your razor-sharp intellectual assistant for writing, summarizing, brainstorming, coding, and multi-file reasoning.',
     iconName: 'Bot',
     color: {

@@ -1,18 +1,27 @@
 @import "tailwindcss";
 @import "katex/dist/katex.min.css";
+@variant dark (&:where(.dark, .dark *));
 
-@layer base {
-  :root {
-    --background: #0b0f17;
-    --foreground: #f1f5f9;
-    --card: #111827;
-    --card-foreground: #f8fafc;
-    --border: #1e293b;
-    --primary: #3b82f6;
-    --primary-foreground: #ffffff;
-    --accent: #1e293b;
-    --accent-foreground: #f8fafc;
-  }
+:root {
+  --background: #0b0f17;
+  --foreground: #f1f5f9;
+  --card: #111827;
+  --card-foreground: #f8fafc;
+  --border: #1e293b;
+  --primary: #3b82f6;
+  --primary-foreground: #ffffff;
+  --accent: #1e293b;
+  --accent-foreground: #f8fafc;
+}
+
+html.light, [data-theme="light"] {
+  --background: #f8fafc;
+  --foreground: #0f172a;
+  --card: #ffffff;
+  --card-foreground: #0f172a;
+  --border: #e2e8f0;
+  --accent: #f1f5f9;
+  --accent-foreground: #0f172a;
 }
 
 body {
@@ -109,6 +118,35 @@ body {
   color: #f1f5f9;
 }
 
+/* High-contrast Light Mode overrides */
+html.light .prose {
+  color: #1e293b;
+}
+html.light .prose h1,
+html.light .prose h2,
+html.light .prose h3,
+html.light .prose h4 {
+  color: #0f172a !important;
+}
+html.light .prose th {
+  background-color: #f1f5f9;
+  color: #0f172a;
+  border-color: #cbd5e1;
+}
+html.light .prose td {
+  border-color: #e2e8f0;
+  color: #1e293b;
+}
+html.light .prose code:not(pre code) {
+  background-color: #f1f5f9;
+  color: #1d4ed8;
+  border-color: #cbd5e1;
+}
+html.light .prose blockquote {
+  color: #475569;
+  border-left-color: #3b82f6;
+}
+
 /* Print styles for Worksheets and Medical Reports */
 @media print {
   body {
@@ -134,6 +172,25 @@ body {
   }
   .print-page-break {
     page-break-before: always;
+  }
+  .worksheet-printable-area {
+    position: fixed !important;
+    inset: 0 !important;
+    width: 100vw !important;
+    min-height: 100vh !important;
+    margin: 0 !important;
+    padding: 15mm 20mm !important;
+    color: #000000 !important;
+    background: #ffffff !important;
+    z-index: 999999 !important;
+  }
+  .worksheet-printable-area * {
+    color: #000000 !important;
+    background: transparent !important;
+  }
+  .worksheet-page-break {
+    page-break-before: always !important;
+    break-before: page !important;
   }
   .prose pre {
     border: 1px solid #cbd5e1;

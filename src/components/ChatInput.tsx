@@ -3,6 +3,8 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { processFileToAttachment, formatBytes } from '@/lib/attachments';
 import { AGENTS } from '@/lib/agents';
+import { AgentIcon } from './AgentIcon';
+import { useSpeechRecognition } from '@/lib/useSpeechRecognition';
 import type { Attachment, AgentId } from '@/types';
 import {
   Paperclip,
@@ -14,6 +16,9 @@ import {
   FileCode,
   Image as ImageIcon,
   UploadCloud,
+  Mic,
+  MicOff,
+  ChevronDown,
 } from 'lucide-react';
 
 interface ChatInputProps {
@@ -21,6 +26,7 @@ interface ChatInputProps {
   isLoading: boolean;
   onStopGeneration: () => void;
   activeAgentId: AgentId;
+  onOpenAgentModal?: () => void;
 }
 
 export function ChatInput({
@@ -28,6 +34,7 @@ export function ChatInput({
   isLoading,
   onStopGeneration,
   activeAgentId,
+  onOpenAgentModal,
 }: ChatInputProps) {
   const [text, setText] = useState('');
   const [attachments, setAttachments] = useState<Attachment[]>([]);
@@ -39,12 +46,37 @@ export function ChatInput({
 
   const currentAgent = AGENTS[activeAgentId] || AGENTS.general;
 
+  // Voice input speech recognition
+  const {
+    isListening,
+    startListening,
+    stopListening,
+    isSupported: isSpeechSupported,
+  } = useSpeechRecognition({
+    onResult: (transcription) => {
+      setText((prev) => {
+        // Append transcribed speech naturally
+        if (!prev.trim()) return transcription;
+        if (prev.endsWith(' ')) return prev + transcription;
+        return `${prev} ${transcription}`;
+      });
+    },
+  });
+
+  const toggleVoiceInput = () => {
+    if (isListening) {
+      stopListening();
+    } else {
+      startListening();
+    }
+  };
+
   // Auto-resize textarea
   const adjustTextareaHeight = useCallback(() => {
     const textarea = textareaRef.current;
     if (!textarea) return;
     textarea.style.height = 'auto';
-    textarea.style.height = `${Math.min(textarea.scrollHeight, 180)}px`;
+    textarea.style.height = `${Math.min(textarea.scrollHeight, 200)}px`;
   }, []);
 
   useEffect(() => {
@@ -113,12 +145,14 @@ export function ChatInput({
 
   const handleSend = () => {
     if (isLoading) return;
-    const trimmed = text.trim();
-    if (!trimmed && attachments.length === 0) return;
+    if (!text.trim() && attachments.length === 0) return;
 
-    onSendMessage(trimmed, attachments);
+    if (isListening) stopListening();
+
+    onSendMessage(text.trim(), attachments);
     setText('');
     setAttachments([]);
+
     if (textareaRef.current) {
       textareaRef.current.style.height = 'auto';
     }
@@ -131,25 +165,25 @@ export function ChatInput({
     }
   };
 
-  // Dynamic placeholder based on agent
   const getPlaceholder = () => {
+    if (isListening) {
+      return '🎙️ Listening... speak clearly into your microphone';
+    }
     switch (activeAgentId) {
       case 'kidstory':
-        return 'Tell me child\'s name, age, favorite theme, or bedtime lesson...';
+        return 'Tell me child\'s name, age, bedtime theme, or moral...';
       case 'doctor':
-        return 'Ask a medical question, or attach prescription/blood test photos...';
+        return 'Ask a medical/prescription question or attach lab report photos...';
       case 'worksheet':
-        return 'Enter topic & grade (e.g., Grade 4 Fractions), or attach textbook photo...';
+        return 'Enter topic, grade level, and question count (e.g. Grade 4 fractions)...';
       case 'dataanalyst':
-        return 'Ask for Looker Studio CASE formulas, Tableau LODs, SQL, or attach CSV...';
-      case 'psycho':
-        return 'What thoughts or emotions are weighing on you today? Take your time...';
-      case 'spiritual':
-        return 'Share your existential doubt, moral dilemma, or question about life...';
+        return 'Ask about Tableau LODs, Looker Studio fields, SQL, or paste CSV...';
+      case 'coder':
+        return 'Paste code to refactor, describe a feature, or paste error trace...';
       case 'studybuddy':
-        return 'Ask about any difficult topic, formula, or concept you want broken down...';
+        return 'Ask about any difficult concept or formula you want broken down...';
       default:
-        return 'Message or drag & drop multiple files (PDFs, images, CSVs, code)...';
+        return 'Type your prompt, or drag & drop files (PDFs, images, CSVs, code)...';
     }
   };
 
@@ -158,10 +192,12 @@ export function ChatInput({
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
-      className={`relative w-full rounded-2xl border transition-all duration-200 bg-slate-900/90 shadow-xl ${
+      className={`relative w-full rounded-2xl border transition-all duration-200 bg-white dark:bg-slate-900/90 shadow-xl ${
         isDragging
-          ? 'border-blue-500 ring-2 ring-blue-500/30 bg-blue-950/20'
-          : 'border-slate-800 focus-within:border-slate-700'
+          ? 'border-blue-500 ring-2 ring-blue-500/30 bg-blue-50 dark:bg-blue-950/20'
+          : isListening
+          ? 'border-rose-500/60 ring-2 ring-rose-500/20'
+          : 'border-slate-300 dark:border-slate-800 focus-within:border-slate-400 dark:focus-within:border-slate-700'
       }`}
     >
       {/* Dragging Overlay */}
@@ -170,7 +206,7 @@ export function ChatInput({
           <UploadCloud className="w-10 h-10 mb-2 animate-bounce" />
           <p className="text-sm font-semibold">Drop files here to attach</p>
           <p className="text-xs text-slate-400 mt-1">
-            Unlimited images, PDFs, CSVs, Excel, code, & text files supported
+            Images, PDFs, CSVs, spreadsheets, code, & text files supported
           </p>
         </div>
       )}
@@ -181,9 +217,6 @@ export function ChatInput({
           <div className="flex items-center justify-between mb-2">
             <span className="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
               <span>📎 Staged Attachments ({attachments.length})</span>
-              <span className="text-[10px] text-slate-500 font-normal">
-                (Multi-file enabled)
-              </span>
             </span>
             <button
               onClick={handleClearAllAttachments}
@@ -243,6 +276,34 @@ export function ChatInput({
         </div>
       )}
 
+      {/* Inline Agent Switcher Badge Strip */}
+      <div className="px-3.5 pt-2 pb-1 flex items-center justify-between text-[11px] text-slate-400 border-b border-slate-800/40">
+        {onOpenAgentModal ? (
+          <button
+            type="button"
+            onClick={onOpenAgentModal}
+            className="flex items-center gap-1.5 px-2 py-0.5 rounded-lg bg-slate-800/70 hover:bg-slate-800 text-slate-300 hover:text-white transition border border-slate-700/60"
+            title="Switch agent persona for this next message"
+          >
+            <AgentIcon name={currentAgent.iconName} className={`w-3.5 h-3.5 ${currentAgent.color.text}`} />
+            <span className="font-medium">{currentAgent.name}</span>
+            <ChevronDown className="w-3 h-3 text-slate-400" />
+          </button>
+        ) : (
+          <div className="flex items-center gap-1.5">
+            <AgentIcon name={currentAgent.iconName} className={`w-3.5 h-3.5 ${currentAgent.color.text}`} />
+            <span>Responding as <strong>{currentAgent.name}</strong></span>
+          </div>
+        )}
+
+        {isListening && (
+          <div className="flex items-center gap-1.5 text-rose-400 font-medium animate-pulse">
+            <span className="w-2 h-2 rounded-full bg-rose-500" />
+            <span>Listening to voice...</span>
+          </div>
+        )}
+      </div>
+
       {/* Main Textarea and Controls */}
       <div className="flex items-end gap-2 p-3">
         {/* Hidden File Input */}
@@ -269,6 +330,22 @@ export function ChatInput({
           )}
         </button>
 
+        {/* Voice Input Microphone Button */}
+        {isSpeechSupported && (
+          <button
+            type="button"
+            onClick={toggleVoiceInput}
+            className={`p-2.5 rounded-xl transition shrink-0 ${
+              isListening
+                ? 'bg-rose-600/30 text-rose-400 border border-rose-500/50 shadow-md shadow-rose-600/30 animate-pulse'
+                : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
+            }`}
+            title={isListening ? 'Click to stop dictation' : 'Click to speak / dictate message'}
+          >
+            {isListening ? <Mic className="w-4 h-4 text-rose-400" /> : <MicOff className="w-4 h-4" />}
+          </button>
+        )}
+
         {/* Text Area */}
         <textarea
           ref={textareaRef}
@@ -278,7 +355,7 @@ export function ChatInput({
           onPaste={handlePaste}
           placeholder={getPlaceholder()}
           rows={1}
-          className="flex-1 bg-transparent text-slate-100 placeholder-slate-500 text-sm focus:outline-none resize-none leading-relaxed py-1.5 max-h-44 scrollbar-thin"
+          className="flex-1 bg-transparent text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 text-sm focus:outline-none resize-none leading-relaxed py-1.5 max-h-48 scrollbar-thin"
         />
 
         {/* Send / Stop Button */}
@@ -286,7 +363,7 @@ export function ChatInput({
           <button
             type="button"
             onClick={onStopGeneration}
-            className="p-2.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white transition shrink-0 shadow-md shadow-rose-600/30"
+            className="p-2.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white transition shrink-0 shadow-md shadow-rose-600/30 active:scale-95"
             title="Stop generation"
           >
             <Square className="w-4 h-4 fill-white" />
@@ -296,10 +373,10 @@ export function ChatInput({
             type="button"
             onClick={handleSend}
             disabled={!text.trim() && attachments.length === 0}
-            className={`p-2.5 rounded-xl transition shrink-0 shadow-md ${
+            className={`p-2.5 rounded-xl transition shrink-0 shadow-md active:scale-95 ${
               text.trim() || attachments.length > 0
                 ? `${currentAgent.color.bg} ${currentAgent.color.text} border ${currentAgent.color.border} hover:opacity-90`
-                : 'bg-slate-800 text-slate-500 cursor-not-allowed border border-transparent'
+                : 'bg-slate-200 dark:bg-slate-800 text-slate-400 dark:text-slate-500 cursor-not-allowed border border-transparent'
             }`}
             title="Send message (Enter)"
           >
